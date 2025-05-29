@@ -17,9 +17,9 @@ warnings.filterwarnings('ignore')
 np.random.seed(42)
 
 # Load the data
-train = pd.read_csv('playground-series-s5e4/train.csv')
-test = pd.read_csv('/playground-series-s5e4/test.csv')
-sample_submission = pd.read_csv('/playground-series-s5e4/sample_submission.csv')
+train = pd.read_csv('/Users/shine/Desktop/Kaggle/Predict Podcast Listening Time/playground-series-s5e4/train.csv')
+test = pd.read_csv('/Users/shine/Desktop/Kaggle/Predict Podcast Listening Time/playground-series-s5e4/test.csv')
+sample_submission = pd.read_csv('/Users/shine/Desktop/Kaggle/Predict Podcast Listening Time/playground-series-s5e4/sample_submission.csv')
 
 print("Train shape:", train.shape)
 print("Test shape:", test.shape)
