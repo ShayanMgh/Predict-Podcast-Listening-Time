@@ -64,3 +64,52 @@ plt.figure(figsize=(12, 10))
 sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0)
 plt.title('Correlation Matrix')
 plt.show()
+
+def feature_engineering(df):
+    """
+    Perform feature engineering on the dataset
+    """
+    df = df.copy()
+    
+    # Identify categorical and numerical columns
+    categorical_cols = df.select_dtypes(include=['object']).columns.tolist()
+    numerical_cols = df.select_dtypes(include=[np.number]).columns.tolist()
+    
+    # Remove id and target from numerical columns if present
+    if 'id' in numerical_cols:
+        numerical_cols.remove('id')
+    if 'Listening_Time_minutes' in numerical_cols:
+        numerical_cols.remove('Listening_Time_minutes')
+    
+    print(f"Categorical columns: {categorical_cols}")
+    print(f"Numerical columns: {numerical_cols}")
+    
+    # Handle categorical variables with label encoding
+    label_encoders = {}
+    for col in categorical_cols:
+        le = LabelEncoder()
+        df[col] = le.fit_transform(df[col].astype(str))
+        label_encoders[col] = le
+    
+    # Create interaction features
+    if len(numerical_cols) >= 2:
+        # Create some polynomial features
+        for i, col1 in enumerate(numerical_cols[:3]):  # Limit to avoid too many features
+            for col2 in numerical_cols[i+1:4]:
+                df[f'{col1}_x_{col2}'] = df[col1] * df[col2]
+                df[f'{col1}_div_{col2}'] = df[col1] / (df[col2] + 1e-8)
+    
+    # Create statistical features
+    for col in numerical_cols:
+        df[f'{col}_squared'] = df[col] ** 2
+        df[f'{col}_sqrt'] = np.sqrt(np.abs(df[col]))
+        df[f'{col}_log'] = np.log1p(np.abs(df[col]))
+    
+    return df, label_encoders
+
+# Apply feature engineering
+train_fe, label_encoders = feature_engineering(train)
+test_fe, _ = feature_engineering(test)
+
+print(f"Original train shape: {train.shape}")
+print(f"Feature engineered train shape: {train_fe.shape}")
